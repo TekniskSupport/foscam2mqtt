@@ -1,0 +1,19 @@
+{
+  "broker": "127.0.0.1",
+  "devices": [
+     {
+       "name": "NameOfCamera",
+       "host": "192.168.x.z",
+       "port": "88",
+       "user": "admin",
+       "pwd":  ""
+     },
+     {
+       "name": "NameOfCamera",
+       "host": "192.168.x.y",
+       "port": "88",
+       "user": "admin",
+       "pwd":  ""
+     }
+  ]
+}

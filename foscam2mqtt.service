@@ -1,0 +1,14 @@
+[Unit]
+Description=Foscam2mqtt
+Documentation=n/a
+
+[Service]
+Type=simple
+User=YOUR
+Group=USER
+ExecStart=/usr/bin/python3 /path/to/foscam2mqtt/foscam2mqtt.py
+KillSignal=SIGUSR2
+#ExecStopPost=/usr/bin/sleep 3
+
+[Install]
+WantedBy=multi-user.target
