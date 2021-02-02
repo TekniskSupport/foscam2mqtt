@@ -18,10 +18,10 @@ def getMotionDetection(host, port, user, pwd):
 
     return motion
 
-def publishMqtt(device, state):
+def publishMqtt(topic, state):
     client= paho.Client("foscam2mqtt-client")
     client.connect(conf["broker"])
-    client.publish("foscam2mqtt/"+ device +"/motion",state)
+    client.publish("foscam2mqtt/"+ topic,state)
     client.disconnect()
 
 def timestamp():
@@ -46,14 +46,19 @@ while True:
                 currentValue = "-1"
                 print(timestamp() + " " + name + " initial state -1")
 
-            if   (int(motion) == 2):
-                currentValues[name] = motion
+            if (int(motion) == 2):
                 print(timestamp() + " Changed value on " + name + " to ON")
-                publishMqtt(name, '{ "plug": '+ name +', "reason": "motion", "name": '+ name +' }')
-            elif (int(motion) == 1 and currentValue != motion):
                 currentValues[name] = motion
+                publishMqtt(name + '/motion', "ON")
+                publishMqtt(name + "/motion/json", '{ "device": "'+ name +'", "eventType": "motion", "state": "true" }')
+                publishMqtt(name + "/shinobi", '{ "plug": "'+ name +'", "reason": "motion", "name": "'+ name +'"}')
+            elif (int(motion) == 1 and currentValue != motion): 
                 print(timestamp() + " Changed value on " + name + " to OFF")
-                publishMqtt(name, "")
+                currentValues[name] = motion
+                publishMqtt(name + "/motion", "OFF")
+                publishMqtt(name + "/motion/json", '{ "device": "'+ name +'", "eventType": "motion", "state": "false" }')
+                publishMqtt(name + "/shinobi", '{ "plug": "'+ name +'", "reason": "motion", "name": "'+ name + '"}')
+                
         except (
             requests.exceptions.ConnectTimeout,
             requests.exceptions.ReadTimeout,
@@ -65,4 +70,4 @@ while True:
                print (e)
                print (timestamp() + ' There was an exception on '+ name)
 
-    time.sleep(.2)
+    time.sleep(.5)
